@@ -2,6 +2,11 @@
 ## Description:
 A bad usb device which uses an AtTiny85 to emulate a HID keyboard, run some powershell code.
 
+## Requirements
+1. A chip with USB port and AtTiny85 on it, DigiSpark made this kind of things and work well.
+2. Arduino IDE with DigiSpark AVR add-on installed.
+3. A target computer(you can use your own one).
+
 ## How to use it:
 1. Modify the payload to fit your situation.
 2. Flash it into your chip.
@@ -20,6 +25,6 @@ A bad usb device which uses an AtTiny85 to emulate a HID keyboard, run some powe
 #### Plenty of examples can be found on Google.
 ### 4. Why does it have to connect my computer twice before my payload finally start to work?
 #### You've asked an excellent question!
-#### When you plug it in, the first thing is the bootloader waits for the connection from Arduino IDE. If there's no connection, then run your sketch.
-#### In your sketch, it loads the V-USB module, disconnect itself and reconnect as a HID device, hence act like it connected twice.
-#### In the future, I'll try to remove the bootloader and directly load the V-USB module and so on.
+#### When you plug it in, the first thing is that the bootloader waits for the connection from Arduino IDE.
+#### After waited for a while, it loads the V-USB module, disconnect itself and reconnect as a HID device, hence act like it was connecting twice.
+#### In the future, I'll try to remove the bootloader and directly load the V-USB module.
