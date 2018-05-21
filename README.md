@@ -10,16 +10,16 @@ A bad usb device which uses an AtTiny85 to emulate a HID keyboard, run some powe
 
 ## What-ifs:
 ### 1. What if I don't have a chip?
-	Well... GO AND BUY ONE OR MAKE YOUR OWN ONE! You'll find it quite cheap on online shop. It's also very easy to build one.
-	See http://digistump.com/products/1 for more details.
+#### Well... GO AND BUY ONE OR MAKE YOUR OWN ONE! You'll find it quite cheap on online shop. It's also very easy to build one.
+#### See http://digistump.com/products/1 for more details.
 ### 2. Okay, I have one but I can't flash the program. What happened?
-	That's because you haven't got the right driver installed.
-	See http://digistump.com/wiki/digispark/tutorials/connecting
+#### That's because you haven't got the right driver installed.
+#### See http://digistump.com/wiki/digispark/tutorials/connecting
 ### 3. Riiiiiight... I don't have Python environment, what now?
-	Well... Use whatever programming language you have to create a TCP server and listen for 127.0.0.1:1234(by default).
-	Plenty of examples can be found on Google.
+#### Well... Use whatever programming language you have to create a TCP server and listen for 127.0.0.1:1234(by default).
+#### Plenty of examples can be found on Google.
 ### 4. Why does it have to connect my computer twice before my payload finally start to work?
-	You've asked an excellent question!
-	When you plug it in, the first thing is the bootloader waits for the connection from Arduino IDE. If there's no connection, then run your sketch.
-	In your sketch, it loads the V-USB module, disconnect itself and reconnect as a HID device, hence act like it connected twice.
-	In the future, I'll try to remove the bootloader and directly load the V-USB module and so on.
+#### You've asked an excellent question!
+#### When you plug it in, the first thing is the bootloader waits for the connection from Arduino IDE. If there's no connection, then run your sketch.
+#### In your sketch, it loads the V-USB module, disconnect itself and reconnect as a HID device, hence act like it connected twice.
+#### In the future, I'll try to remove the bootloader and directly load the V-USB module and so on.
