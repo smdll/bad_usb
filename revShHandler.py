@@ -1,5 +1,4 @@
 from socket import *
-import sys
 import base64
 
 def revShHandler(ip_addr, port):

