@@ -45,8 +45,7 @@ def revShellHandler():
 		data = queue.get()
 		lock.release()
 		return data
-	print 'Queue not init'
-	return ''
+	return '!'
 
 def revshell(queue, ip_addr, port):
 	print 'Thread created'
